@@ -1,0 +1,21 @@
+{
+  "name": "nodeapplication",
+  "version": "1.0.0",
+  "main": "nodeServer.js",
+  "scripts": {
+  "start": "start http://localhost:8080 & node nodeServer.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
+    "formidable": "^1.1.1",
+    "multer": "^1.3.0"
+  },
+  "devDependencies": {},
+  "description": ""
+  
+}
+
+
