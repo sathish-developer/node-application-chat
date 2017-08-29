@@ -1,16 +1,47 @@
 <!DOCTYPE html>
 <html>
-   <body style="align:center">
-      <form action="http://localhost:8080/login" method="post" enctype="application/x-www-form-urlencoded">
-         <fieldset>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter your full name" />
-            <br />
-            <label for="email">Email:</label>
-            <input type=text id="password" name="password" placeholder="Enter your email address" />
-            <br />
-            <input type="submit" value="Create Profile" />
-         </fieldset>
-      </form>
-   </body>
+<body style="align: center">
+<!-- 	<form action="http://localhost:8080/login" method="post" -->
+<!-- 		enctype="application/x-www-form-urlencoded"> -->
+<!-- 		<fieldset> -->
+<!-- 			<label for="name">Name:</label> <input type="text" id="name" -->
+<!-- 				name="name" placeholder="Enter your full name" /> <br /> <label
+<!-- 				for="email">Email:</label> <input type=text id="password" -->
+<!-- 				name="password" placeholder="Enter your email address" /> -->
+<!--  <br /> <input -->
+<!-- 				type="submit" value="Create Profile" />  -->
+<!-- 		</fieldset> -->
+<!-- 	</form> -->
+        <input type="text" id="username" name="name" value="" placeholder="Enter your name!">
+        <button type="button" name="button" onclick="setUsername()">Let me chat!</button>
+</body>
+<script src="http://192.168.0.35:3000/socket.io/socket.io.js"></script>
+<script>
+	var socket = io();
+	function setUsername(){
+		var userdata=document.getElementById('username').value;
+        socket.emit('setUsername',userdata);
+    };
+    
+    socket.on('userSet', function(data){
+        user = data;
+        document.body.innerHTML = '<input type="text" id="message">\
+        <button type="button" name="button" onclick="sendMessage()">Send</button>\
+        <div id="message-container"></div>';
+    });
+    function sendMessage(){
+        var msg = document.getElementById('message').value;
+        if(msg){
+            socket.emit('msg', {message: msg, user: user});
+        }
+    }
+    socket.on('newmsg', function(data){
+    	//alert(JSON.stringify(data));
+        if(data.user){
+            document.getElementById('message-container').innerHTML += '<div><b>' + data.user.username + '</b>: ' + data.message + '</div>'
+        }
+    })
+    
+	
+</script>
 </html>

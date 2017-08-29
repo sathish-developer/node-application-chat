@@ -4,7 +4,12 @@ var cons = require('consolidate');
 var path = require('path');
 var bodyParser = require('body-parser');
 var mysqlserver = require("mysql");
-var userService=require("./webContent/app/services/UserService");
+var userService = require("./webContent/app/services/UserService");
+var http = require('http');
+app.set('port', process.env.PORT || 3000);
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+
 
 
 
@@ -27,7 +32,7 @@ app.get('/', function(req, res) {
 	res.render('index.html');
 });
 
-var user = {};
+/*var user = {};
 app.post('/login', function(req, res) {
 	user = {
 		username : req.body.name,
@@ -36,18 +41,37 @@ app.post('/login', function(req, res) {
 	console.log(JSON.stringify(user));
 	userService.insertUser(user);
 	userService.fetchUser(user);
-	
+
 	res.render('welcome.html', {
 		'message' : user.username
 	});
-});
+});*/
 
+//Whenever someone connects this gets executed
+var user = {};
+io.on('connection', function(socket) {
+
+	socket.on('setUsername', function(data) {
+		user = {
+			username : data
+		}
+		console.log("a user connected ::" + user.username);
+		socket.emit('userSet',{username :user.username});	
+	});
+	 socket.on('msg', function(data){
+	      //Send message to everyone
+	      io.sockets.emit('newmsg', data);
+	  })
+	
+	
+
+/*socket.on('connect_failed', function() {
+    document.write("Sorry, there seems to be an issue with the connection!");
+})*/
+});
 
 app.get('/about', function(req, res) {
 	res.render('about.html');
 });
 
-
-app.listen('8080', function() {
-	console.log("listening");
-});
+server.listen(app.get('port'));
